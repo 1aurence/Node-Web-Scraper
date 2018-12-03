@@ -9,17 +9,29 @@
 </head>
 <body>
     <div id="app">
+
         <form >
-            <div class="form-group">
+              <div class="form-group">
               <label for="website">Website URL:</label>
-              <input v-model="url" type="text" class="form-control">
+              <input v-model="url" type="text" class="form-control"  
+              value="https://en.wikipedia.org/wiki/List_of_Presidents_of_the_United_States">
             </div>
+
             <div class="form-group">
               <label for="keyword">Keyword:</label>
               <input v-model="keyword" type="text" class="form-control" >
             </div>
             <button @click.prevent="search" class="btn btn-primary">Submit</button>
+            <hr />
           </form>
+          <div v-if="requestMade">
+                <form action="/download" method="get">
+
+            <button class="btn btn-primary" type="submit">Download PDF of Result</button>
+        </form>
+
+          </div>
+
           <div v-if="error.status">
               <h1>Error: {{error.message}}</h1>
               <ul>
@@ -28,10 +40,11 @@
                   </li>
               </ul>
           </div>
-    </div>
-    <script src="/socket.io/socket.io.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    </div> <!-- end of #app-->
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
 
 <script>
 var socket = io.connect("http://localhost:3000/");
@@ -49,7 +62,7 @@ var app = new Vue({
     }
   },
     created(){
-socket.on('searchResult', (result) => {
+    socket.on('searchResult', (result) => {
     console.log(result)
     this.requestMade = true
 })
@@ -62,7 +75,7 @@ socket.on('err', (err) => {
       search(){
         socket.emit('searchRequest', {url: this.url, keyword: this.keyword});
 
-      }
+      },
   }
 
 })
