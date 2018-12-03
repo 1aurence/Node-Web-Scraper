@@ -5,7 +5,7 @@ const app = require('express')();
 const server = require('http').createServer(app);  
 const io = require('socket.io')(server);var fs = require('fs');
 
-const port = process.env.port || 3000;
+const port = process.env.PORT || 3000;
 server.listen(port, () => console.log(`Server running on ${port}`));
 
 const options = {
