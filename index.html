@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Web scraper</title>
+    <link rel="stylesheet" href="https://bootswatch.com/4/cyborg/bootstrap.min.css">
+</head>
+<body>
+    <div id="app">
+        <form >
+            <div class="form-group">
+              <label for="website">Website URL:</label>
+              <input v-model="url" type="text" class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="keyword">Keyword:</label>
+              <input v-model="keyword" type="text" class="form-control" >
+            </div>
+            <button @click.prevent="search" class="btn btn-primary">Submit</button>
+          </form>
+          <div v-if="error.status">
+              <h1>Error: {{error.message}}</h1>
+              <ul>
+                  <li v-for="item in response">
+                      {{item}}
+                  </li>
+              </ul>
+          </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+
+<script>
+var socket = io.connect("http://localhost:3000/");
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    url: '',
+    keyword: '',  
+    requestMade: false,
+    response: [],
+    error: {
+        status: false,
+        message: ''
+    }
+  },
+    created(){
+socket.on('searchResult', (result) => {
+    console.log(result)
+    this.requestMade = true
+})
+socket.on('err', (err) => {
+    this.error.status = true
+    this.error.message = err
+})
+    },
+  methods: {
+      search(){
+        socket.emit('searchRequest', {url: this.url, keyword: this.keyword});
+
+      }
+  }
+
+})
+</script>
+</body>
+
+
+
+<style>
+    form {
+    width: 70%;
+    margin: 0 auto;
+}
+    
+    
+    </style>
+</html>
