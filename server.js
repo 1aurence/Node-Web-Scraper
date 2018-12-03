@@ -25,7 +25,7 @@ app.get('/', function (req, res) {
 
           .then(($) => {
            searchResult = $('body').find(data.keyword)
-           fs.writeFile('response.pdf', searchResult.text(), (err) => {
+           fs.writeFile('response.doc', searchResult.text(), (err) => {
                if(err) throw err
             console.log('response written')
            
