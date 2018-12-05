@@ -4,8 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "test": "nodemon --exec \"mocha -R min\""
   },
   "repository": {
     "type": "git",
@@ -18,8 +17,10 @@
   },
   "homepage": "https://github.com/CodingWithLaurence/Node-Web-Scraper#readme",
   "dependencies": {
+    "chai": "^4.2.0",
     "cheerio": "^1.0.0-rc.2",
     "express": "^4.16.4",
+    "mocha": "^5.2.0",
     "puppeteer": "^1.11.0",
     "request": "^2.88.0",
     "request-promise": "^4.2.2",

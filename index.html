@@ -11,6 +11,10 @@
     <div id="app">
 
         <form >
+                <div>
+                        <p>Enter any websites URL and enter one or as many HTML tags you wish that are comma seperated</p>
+                    </div>
+                    <hr />
               <div class="form-group">
               <label for="website">Website URL:</label>
               <input v-model="url" type="text" class="form-control"  
@@ -18,21 +22,25 @@
             </div>
 
             <div class="form-group">
-              <label for="keyword">Keyword:</label>
+              <label for="keyword">HTML Tag:</label>
               <input v-model="keyword" type="text" class="form-control" >
             </div>
-            <button @click.prevent="search" class="btn btn-primary">Submit</button>
-            <hr />
-          </form>
-          <div v-if="requestMade">
+            <button @click.prevent="search" class="btn btn-primary" @click="showProgress = true">Submit</button>
+            <span v-if="showProgress">Loading... <img src="https://loading.io/spinners/rolling/index.curve-bars-loading-indicator.svg" alt="">
+            </span>
+        </form>
+          <div v-if="resultReady">
                 <form action="/download" method="get">
-
-            <button class="btn btn-primary" type="submit">Download PDF of Result</button>
+                    <div class="alert alert-success" role="alert">
+                    <p><strong>Success!</strong> Your document is ready for download.</p>
+                    </div>      
+            <button class="btn btn-primary" type="submit" @click="reset">Download PDF of Result</button>
         </form>
 
           </div>
 
-          <div v-if="error.status">
+          <div v-if="error.status" class="alert alert-warning" role="alert">
+              <span id="close-warning-alert" @click="error.status = false">X</span>
               <h1>Error: {{error.message}}</h1>
               <ul>
                   <li v-for="item in response">
@@ -40,21 +48,22 @@
                   </li>
               </ul>
           </div>
-
+       
     </div> <!-- end of #app-->
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue"></script>
 
 <script>
-var socket = io.connect("https://dry-dusk-83913.herokuapp.com/");
+var socket = io.connect("http://localhost:5000");
 
 var app = new Vue({
   el: '#app',
   data: {
     url: '',
     keyword: '',  
-    requestMade: false,
+    showProgress: false,
+    resultReady: false,
     response: [],
     error: {
         status: false,
@@ -64,18 +73,26 @@ var app = new Vue({
     created(){
     socket.on('searchResult', (result) => {
     console.log(result)
-    this.requestMade = true
+    this.resultReady = true
+    this.showProgress = false
 })
 socket.on('err', (err) => {
     this.error.status = true
     this.error.message = err
+    this.showProgress = false
+
 })
     },
   methods: {
       search(){
         socket.emit('searchRequest', {url: this.url, keyword: this.keyword});
-
+     
       },
+      reset(){
+        this.resultReady = false
+        this.url = ""
+        this.keyword = ""
+      }
   }
 
 })
@@ -90,8 +107,32 @@ socket.on('err', (err) => {
     width: 40%;
     margin: 0 auto;
     margin-top:5%;
-}
     
+}
+.form-control {
+    transition: all .3s ease-out;
+}
+.form-control:focus {
+    border: 5px solid #666;
+    height: 50px;
+}
+    hr {
+        background: lightgray;
+        opacity: .7;
+    }
+.test {
+    width: 50%;
+    margin: 0 auto;
+}
+#closeAlert {
+    font-size: 1.6rem;
+    cursor: pointer;
+
+}
+#close-warning-alert:hover {
+    opacity: .8;
+}
+
     
     </style>
 </html>
