@@ -36,6 +36,9 @@
                     </div>      
             <button class="btn btn-primary" type="submit" @click="reset">Download PDF of Result</button>
         </form>
+        <form action="/webview" method=get>
+        <button class="btn btn-primary" type="submit" @click="reset">View result on webpage</button>
+        </form>
 
           </div>
 
@@ -55,7 +58,7 @@
     <script src="https://cdn.jsdelivr.net/npm/vue"></script>
 
 <script>
-var socket = io.connect("https://dry-dusk-83913.herokuapp.com/");
+var socket = io.connect("http://localhost:3000/#/");
 
 var app = new Vue({
   el: '#app',
@@ -86,7 +89,7 @@ socket.on('err', (err) => {
   methods: {
       search(){
         socket.emit('searchRequest', {url: this.url, keyword: this.keyword});
-     
+
       },
       reset(){
         this.resultReady = false
